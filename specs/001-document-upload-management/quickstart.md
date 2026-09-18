@@ -21,6 +21,7 @@
 - Navigate to the document upload page or the project context where upload is available.
 - Choose a valid file such as a PDF or Word document under 25 MB.
 - Enter a title, category, and optional project association.
+- Optionally enter tags for later searching.
 - Submit the upload.
 
 Expected outcome:
@@ -44,6 +45,15 @@ Expected outcome:
 Expected outcome:
 - Only documents the current user is allowed to access are returned.
 - Results update correctly and quickly for a small document set.
+
+### 3a. Download and shared documents
+
+- Select **Download** for a document you own or can access through a project/share.
+- Select **Shared with me** to show explicit shares.
+
+Expected outcome:
+- The download is returned only after the service authorization check.
+- A shared document appears for the recipient and a notification is created.
 
 ### 4. Project access and authorization
 
@@ -72,6 +82,13 @@ Expected outcome:
 Expected outcome:
 - Metadata updates persist.
 - Replacement file processing preserves the document identity with a valid audit trail.
+
+### 7. Delete a document
+
+- As the owner, select **Delete** and confirm the action.
+
+Expected outcome:
+- The metadata is soft-deleted, the physical stored file is removed, and a delete activity record is created.
 
 ## Expected results
 

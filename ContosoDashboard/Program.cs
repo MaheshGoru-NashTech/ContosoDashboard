@@ -64,11 +64,15 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 // Add HttpContextAccessor for accessing user claims
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+var uploadRoot = app.Configuration["FileStorage:UploadRoot"] ?? Path.Combine("AppData", "uploads");
+Directory.CreateDirectory(Path.IsPathRooted(uploadRoot) ? uploadRoot : Path.Combine(app.Environment.ContentRootPath, uploadRoot));
 
 // Initialize database
 using (var scope = app.Services.CreateScope())
@@ -78,11 +82,77 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         context.Database.EnsureCreated(); // For development - use migrations in production
+        EnsureDocumentTables(context);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred creating the database.");
+    }
+}
+
+static void EnsureDocumentTables(ApplicationDbContext context)
+{
+    if (!context.Database.IsSqlite())
+    {
+        return;
+    }
+
+    context.Database.ExecuteSqlRaw("""
+        CREATE TABLE IF NOT EXISTS Documents (
+            DocumentId INTEGER NOT NULL CONSTRAINT PK_Documents PRIMARY KEY AUTOINCREMENT,
+            Title TEXT NOT NULL,
+            Description TEXT NULL,
+            Category TEXT NOT NULL,
+            Tags TEXT NULL,
+            FileName TEXT NOT NULL,
+            StoredFileName TEXT NOT NULL,
+            FilePath TEXT NOT NULL,
+            FileType TEXT NOT NULL,
+            FileSizeBytes INTEGER NOT NULL,
+            UploadedByUserId INTEGER NOT NULL,
+            ProjectId INTEGER NULL,
+            UploadedAtUtc TEXT NOT NULL,
+            UpdatedAtUtc TEXT NOT NULL,
+            IsDeleted INTEGER NOT NULL,
+            CONSTRAINT FK_Documents_Users_UploadedByUserId FOREIGN KEY (UploadedByUserId) REFERENCES Users (UserId) ON DELETE RESTRICT,
+            CONSTRAINT FK_Documents_Projects_ProjectId FOREIGN KEY (ProjectId) REFERENCES Projects (ProjectId) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS DocumentShares (
+            DocumentShareId INTEGER NOT NULL CONSTRAINT PK_DocumentShares PRIMARY KEY AUTOINCREMENT,
+            DocumentId INTEGER NOT NULL,
+            UserId INTEGER NOT NULL,
+            SharedByUserId INTEGER NOT NULL,
+            SharedAtUtc TEXT NOT NULL,
+            NotificationSent INTEGER NOT NULL,
+            CONSTRAINT FK_DocumentShares_Documents_DocumentId FOREIGN KEY (DocumentId) REFERENCES Documents (DocumentId) ON DELETE CASCADE,
+            CONSTRAINT FK_DocumentShares_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (UserId) ON DELETE CASCADE,
+            CONSTRAINT FK_DocumentShares_Users_SharedByUserId FOREIGN KEY (SharedByUserId) REFERENCES Users (UserId) ON DELETE RESTRICT
+        );
+        CREATE TABLE IF NOT EXISTS DocumentActivityLogs (
+            ActivityId INTEGER NOT NULL CONSTRAINT PK_DocumentActivityLogs PRIMARY KEY AUTOINCREMENT,
+            DocumentId INTEGER NOT NULL,
+            UserId INTEGER NOT NULL,
+            ActivityType TEXT NOT NULL,
+            ActivityAtUtc TEXT NOT NULL,
+            Details TEXT NULL,
+            CONSTRAINT FK_DocumentActivityLogs_Documents_DocumentId FOREIGN KEY (DocumentId) REFERENCES Documents (DocumentId) ON DELETE CASCADE,
+            CONSTRAINT FK_DocumentActivityLogs_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (UserId) ON DELETE RESTRICT
+        );
+        CREATE INDEX IF NOT EXISTS IX_Documents_UploadedByUserId ON Documents (UploadedByUserId);
+        CREATE INDEX IF NOT EXISTS IX_Documents_ProjectId ON Documents (ProjectId);
+        CREATE INDEX IF NOT EXISTS IX_Documents_Category ON Documents (Category);
+        CREATE INDEX IF NOT EXISTS IX_DocumentShares_DocumentId ON DocumentShares (DocumentId);
+        CREATE INDEX IF NOT EXISTS IX_DocumentShares_UserId ON DocumentShares (UserId);
+        """);
+
+    try
+    {
+        context.Database.ExecuteSqlRaw("ALTER TABLE Documents ADD COLUMN Tags TEXT NULL;");
+    }
+    catch (Exception ex) when (ex.Message.Contains("duplicate column name", StringComparison.OrdinalIgnoreCase))
+    {
+        // Existing databases already contain the column.
     }
 }
 
@@ -125,6 +195,31 @@ app.UseRouting();
 // Enable authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/documents/download/{documentId:int}", async (int documentId, HttpContext httpContext, IDocumentService documentService) =>
+{
+    var claim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+    if (claim == null || !int.TryParse(claim.Value, out var userId))
+    {
+        return Results.Unauthorized();
+    }
+
+    try
+    {
+        var document = await documentService.GetDocumentByIdAsync(documentId, userId);
+        if (document == null)
+        {
+            return Results.NotFound();
+        }
+
+        var stream = await documentService.DownloadDocumentAsync(documentId, userId);
+        return Results.File(stream, document.FileType, document.FileName);
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.NotFound();
+    }
+}).RequireAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

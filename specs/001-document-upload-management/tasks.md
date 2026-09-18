@@ -7,9 +7,9 @@
 
 **Purpose**: Establish the document feature foundation in the existing Blazor + EF Core application.
 
-- [ ] T001 Create the feature working folder and confirm the repository path layout for `ContosoDashboard/` and `specs/001-document-upload-management/`
-- [ ] T002 [P] Add the local upload storage directory convention and default directory configuration in `ContosoDashboard/appsettings.Development.json`
-- [ ] T003 [P] Add storage bootstrap guidance in `ContosoDashboard/Program.cs` so the application prepares a secure upload directory outside `wwwroot`
+- [X] T001 Create the feature working folder and confirm the repository path layout for `ContosoDashboard/` and `specs/001-document-upload-management/`
+- [X] T002 [P] Add the local upload storage directory convention and default directory configuration in `ContosoDashboard/appsettings.Development.json`
+- [X] T003 [P] Add storage bootstrap guidance in `ContosoDashboard/Program.cs` so the application prepares a secure upload directory outside `wwwroot`
 
 ---
 
@@ -19,15 +19,15 @@
 
 **Critical**: No user story work may begin until this phase is complete.
 
-- [ ] T004 Create the base document metadata model in `ContosoDashboard/Models/Document.cs`
-- [ ] T005 [P] Create the `DocumentShare` model in `ContosoDashboard/Models/DocumentShare.cs`
-- [ ] T006 [P] Create the `DocumentActivityLog` model in `ContosoDashboard/Models/DocumentActivityLog.cs`
-- [ ] T007 Add `DbSet` declarations and relationship configuration for document entities in `ContosoDashboard/Data/ApplicationDbContext.cs`
-- [ ] T008 [P] Add storage abstraction contract `IFileStorageService` in `ContosoDashboard/Services/IFileStorageService.cs`
-- [ ] T009 [P] Implement the local file storage service `LocalFileStorageService` in `ContosoDashboard/Services/LocalFileStorageService.cs`
-- [ ] T010 Implement the base `IDocumentService` contract and document query/validation workflow in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T011 Add service-layer authorization checks for project access, owner access, and role-based governance in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T012 Add document activity and notification hooks into `ContosoDashboard/Services/NotificationService.cs` for upload/share/delete events
+- [X] T004 Create the base document metadata model in `ContosoDashboard/Models/Document.cs`
+- [X] T005 [P] Create the `DocumentShare` model in `ContosoDashboard/Models/DocumentShare.cs`
+- [X] T006 [P] Create the `DocumentActivityLog` model in `ContosoDashboard/Models/DocumentActivityLog.cs`
+- [X] T007 Add `DbSet` declarations and relationship configuration for document entities in `ContosoDashboard/Data/ApplicationDbContext.cs`
+- [X] T008 [P] Add storage abstraction contract `IFileStorageService` in `ContosoDashboard/Services/IFileStorageService.cs`
+- [X] T009 [P] Implement the local file storage service `LocalFileStorageService` in `ContosoDashboard/Services/LocalFileStorageService.cs`
+- [X] T010 Implement the base `IDocumentService` contract and document query/validation workflow in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T011 Add service-layer authorization checks for project access, owner access, and role-based governance in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T012 Add document activity and notification hooks into `ContosoDashboard/Services/NotificationService.cs` for upload/share/delete events
 
 **Checkpoint**: Foundation ready - document uploads, permission logic, and storage can now be implemented in story phases.
 
@@ -41,13 +41,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Create the upload request and validation model in `ContosoDashboard/Models/DocumentUploadRequest.cs`
-- [ ] T014 [US1] Implement `UploadDocumentAsync` and validation logic in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T015 [US1] Add secure file writing and GUID-based naming flow through `ContosoDashboard/Services/LocalFileStorageService.cs`
-- [ ] T016 [US1] Add document upload UI and form in `ContosoDashboard/Pages/Documents.razor`
-- [ ] T017 [US1] Add upload form code-behind or page logic in `ContosoDashboard/Pages/Documents.razor.cs`
-- [ ] T018 [US1] Add success/error messaging and upload progress behavior in `ContosoDashboard/Pages/Documents.razor`
-- [ ] T019 [US1] Add project-linked upload handling and metadata persistence for category, tags, and project associations in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T013 [P] [US1] Create the upload request and validation model in `ContosoDashboard/Models/DocumentUploadRequest.cs`
+- [X] T014 [US1] Implement `UploadDocumentAsync` and validation logic in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T015 [US1] Add secure file writing and GUID-based naming flow through `ContosoDashboard/Services/LocalFileStorageService.cs`
+- [X] T016 [US1] Add document upload UI and form in `ContosoDashboard/Pages/Documents.razor`
+- [X] T017 [US1] Add upload form code-behind or page logic in `ContosoDashboard/Pages/Documents.razor.cs`
+- [X] T018 [US1] Add success/error messaging and upload progress behavior in `ContosoDashboard/Pages/Documents.razor`
+- [X] T019 [US1] Add project-linked upload handling and metadata persistence for category, tags, and project associations in `ContosoDashboard/Services/DocumentService.cs`
 
 **Checkpoint**: User Story 1 should be fully functional and independently testable.
 
@@ -61,12 +61,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Implement document listing and filtering queries in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T021 [US2] Add the My Documents and Project Documents views in `ContosoDashboard/Pages/Documents.razor`
-- [ ] T022 [US2] Add search, sort, and category/date filter logic in `ContosoDashboard/Pages/Documents.razor`
-- [ ] T023 [US2] Add preview/download access checks and safe file retrieval in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T024 [US2] Connect document previews and downloads to the stored local file path in `ContosoDashboard/Services/LocalFileStorageService.cs`
-- [ ] T025 [US2] Ensure unauthorized document access is blocked for non-members and restricted roles in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T020 [P] [US2] Implement document listing and filtering queries in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T021 [US2] Add the My Documents and Project Documents views in `ContosoDashboard/Pages/Documents.razor`
+- [X] T022 [US2] Add search, sort, and category/date filter logic in `ContosoDashboard/Pages/Documents.razor`
+- [X] T023 [US2] Add preview/download access checks and safe file retrieval in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T024 [US2] Connect document previews and downloads to the stored local file path in `ContosoDashboard/Services/LocalFileStorageService.cs`
+- [X] T025 [US2] Ensure unauthorized document access is blocked for non-members and restricted roles in `ContosoDashboard/Services/DocumentService.cs`
 
 **Checkpoint**: User Stories 1 and 2 should both work independently.
 
@@ -80,12 +80,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Add metadata update and file replacement workflow in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T027 [US3] Add document sharing logic and recipient notification generation in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T028 [US3] Add the shared-with-me document view and notification wiring in `ContosoDashboard/Pages/Documents.razor`
-- [ ] T029 [US3] Add deletion confirmation and physical file cleanup logic in `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T030 [US3] Add audit log creation for uploads, downloads, sharing, replacements, and deletes in `ContosoDashboard/Models/DocumentActivityLog.cs` and `ContosoDashboard/Services/DocumentService.cs`
-- [ ] T031 [US3] Update project task or dashboard integration for document context in `ContosoDashboard/Pages/Index.razor` and `ContosoDashboard/Services/DashboardService.cs`
+- [X] T026 [P] [US3] Add metadata update and file replacement workflow in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T027 [US3] Add document sharing logic and recipient notification generation in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T028 [US3] Add the shared-with-me document view and notification wiring in `ContosoDashboard/Pages/Documents.razor`
+- [X] T029 [US3] Add deletion confirmation and physical file cleanup logic in `ContosoDashboard/Services/DocumentService.cs`
+- [X] T030 [US3] Add audit log creation for uploads, downloads, sharing, replacements, and deletes in `ContosoDashboard/Models/DocumentActivityLog.cs` and `ContosoDashboard/Services/DocumentService.cs`
+- [X] T031 [US3] Update project task or dashboard integration for document context in `ContosoDashboard/Pages/Index.razor` and `ContosoDashboard/Services/DashboardService.cs`
 
 **Checkpoint**: All user stories should now be independently functional.
 
@@ -95,11 +95,11 @@
 
 **Purpose**: Finalize experience, documentation, and validation across all stories.
 
-- [ ] T032 [P] Validate the feature against the quickstart flow in `specs/001-document-upload-management/quickstart.md`
-- [ ] T033 [P] Add repository-level guidance and feature overview notes to `README.md`
-- [ ] T034 Review security and authorization edge cases across `ContosoDashboard/Services/DocumentService.cs` and `ContosoDashboard/Pages/Documents.razor`
-- [ ] T035 Run the application build and smoke-check the document flow in `ContosoDashboard/Program.cs` and the relevant Razor pages
-- [ ] T036 Clean up code quality issues and ensure consistent naming, validation, and access rules across document-related files
+- [X] T032 [P] Validate the feature against the quickstart flow in `specs/001-document-upload-management/quickstart.md`
+- [X] T033 [P] Add repository-level guidance and feature overview notes to `README.md`
+- [X] T034 Review security and authorization edge cases across `ContosoDashboard/Services/DocumentService.cs` and `ContosoDashboard/Pages/Documents.razor`
+- [X] T035 Run the application build and smoke-check the document flow in `ContosoDashboard/Program.cs` and the relevant Razor pages
+- [X] T036 Clean up code quality issues and ensure consistent naming, validation, and access rules across document-related files
 
 ---
 

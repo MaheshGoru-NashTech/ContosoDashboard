@@ -74,6 +74,7 @@ ContosoDashboard is built using ASP.NET Core 8.0 with Blazor Server and provides
 - **Team Directory**: Browse team members by department with status, roles, and contact information
 - **Notifications Center**: View and manage all notifications with read/unread status and priority badges
 - **User Profile**: Update personal information, availability status, and notification preferences
+- **Document Library**: Upload supported files, search and filter accessible documents, download authorized files, share documents, update metadata, replace files, and delete owned documents with audit events
 - **Service-Level Security**: Authorization checks prevent IDOR vulnerabilities
 - **Data Models**: Complete entity framework models for Users, Tasks, Projects, Notifications, and Announcements
 - **Business Services**: Service layer for all core functionality (Tasks, Projects, Users, Notifications, Dashboard)
@@ -160,6 +161,10 @@ public interface IFileStorageService
 4. **Login** - Select any user from the dropdown (no password required)
 
 The application automatically creates and seeds the database on first run with sample users, projects, tasks, and announcements.
+
+### Document Management
+
+Open `/documents` after signing in. Uploaded files are stored outside `wwwroot` under `AppData/uploads` by default. The page supports title/category/project metadata, tags, search, category/date filters, shared-with-me results, authorized downloads, owner metadata updates, file replacement, sharing notifications, and deletion with physical file cleanup. Files are limited to 25 MB and the supported extension whitelist.
 
 ### Testing Security Features
 
