@@ -14,8 +14,29 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 // Configure Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+var isSqliteConnection = !string.IsNullOrWhiteSpace(defaultConnection) &&
+    (defaultConnection.Contains("Data Source=", StringComparison.OrdinalIgnoreCase) ||
+     defaultConnection.Contains("Filename=", StringComparison.OrdinalIgnoreCase)) &&
+    !defaultConnection.Contains("Server=", StringComparison.OrdinalIgnoreCase);
+
+if (isSqliteConnection)
+{
+    var sqliteDbPath = Path.Combine(builder.Environment.ContentRootPath, "ContosoDashboard.db");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite($"Data Source={sqliteDbPath}"));
+}
+else if (!string.IsNullOrWhiteSpace(defaultConnection))
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(defaultConnection));
+}
+else
+{
+    var sqliteDbPath = Path.Combine(builder.Environment.ContentRootPath, "ContosoDashboard.db");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite($"Data Source={sqliteDbPath}"));
+}
 
 // Configure Mock Authentication (Cookie-based for training purposes)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
